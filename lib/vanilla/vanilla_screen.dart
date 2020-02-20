@@ -12,16 +12,19 @@ class VanillaScreen extends StatefulWidget {
 
 class _VanillaScreenState extends State<VanillaScreen> {
   bool _isLoading = false;
+  bool _isError = false;
   User _user;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Vanilla'),
+        title: Text('Vanilla'),
       ),
       body: SafeArea(
-        child: _isLoading ? _buildLoading() : _buildBody(),
+        child: _isLoading
+            ? _buildLoading()
+            : _isError ? _buildError() : _buildBody(),
       ),
     );
   }
@@ -37,7 +40,7 @@ class _VanillaScreenState extends State<VanillaScreen> {
   Widget _buildInit() {
     return Center(
       child: RaisedButton(
-        child: const Text('Load user data'),
+        child: Text('Load user data'),
         onPressed: () {
           setState(() {
             _isLoading = true;
@@ -47,7 +50,12 @@ class _VanillaScreenState extends State<VanillaScreen> {
               _user = user;
               _isLoading = false;
             });
-          });
+          }).catchError((onError) => {
+                setState(() {
+                  _isLoading = false;
+                  _isError = true;
+                })
+              });
         },
       ),
     );
@@ -60,8 +68,14 @@ class _VanillaScreenState extends State<VanillaScreen> {
   }
 
   Widget _buildLoading() {
-    return const Center(
+    return Center(
       child: CircularProgressIndicator(),
+    );
+  }
+
+  Widget _buildError() {
+    return Center(
+      child: Icon(Icons.error),
     );
   }
 }

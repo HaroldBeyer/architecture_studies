@@ -9,9 +9,11 @@ class UserModel extends Model {
 
   bool _isLoading = false;
   User _user;
+  bool _isError = false;
 
   User get user => _user;
   bool get isLoading => _isLoading;
+  bool get isError => _isError;
 
   void loadUserData() {
     _isLoading = true;
@@ -20,7 +22,8 @@ class UserModel extends Model {
       _user = user;
       _isLoading = false;
       notifyListeners();
-    });
+    }).catchError(
+        (onError) => {_isLoading = false, _isError = true, notifyListeners()});
   }
 
   static UserModel of(BuildContext context) =>

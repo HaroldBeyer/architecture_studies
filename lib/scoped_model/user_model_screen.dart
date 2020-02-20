@@ -1,7 +1,7 @@
 import 'package:architecture_studies/repository.dart';
 import 'package:architecture_studies/scoped_model/user_model.dart';
-import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter/material.dart';
 
 class UserModelScreen extends StatefulWidget {
   UserModelScreen(this._repository);
@@ -26,14 +26,16 @@ class _UserModelScreenState extends State<UserModelScreen> {
       model: _userModel,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Scoped model'),
+          title: Text('Scoped model'),
         ),
         body: SafeArea(
           child: ScopedModelDescendant<UserModel>(
             builder: (context, child, model) {
+              if (model.isError) return _buildError();
               if (model.isLoading) {
                 return _buildLoading();
               } else {
+                // model.user != null ? _buildContent(model) : _buildInit(model);
                 if (model.user != null) {
                   return _buildContent(model);
                 } else {
@@ -67,6 +69,12 @@ class _UserModelScreenState extends State<UserModelScreen> {
   Widget _buildLoading() {
     return const Center(
       child: CircularProgressIndicator(),
+    );
+  }
+
+  Widget _buildError() {
+    return Center(
+      child: Icon(Icons.error),
     );
   }
 }
